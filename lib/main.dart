@@ -29,8 +29,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   final counterBloc = CounterBloc();
+
+  @override
+  void dispose() {
+    counterBloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +84,23 @@ class MyHomePage extends StatelessWidget {
                 stream: counterBloc.counterStream,
                 initialData: 0,
                 builder: (context, snapshot) {
-                  return Text(
-                    '${snapshot.data}',
-                    style: Theme.of(context).textTheme.headline4,
-                  );
+                  if (snapshot.hasData) {
+                    return Text(
+                      '${snapshot.data}',
+                      style: Theme.of(context).textTheme.headline4,
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Text(
+                      'Error Occured',
+                      style: Theme.of(context).textTheme.headline4,
+                    );
+                  } else {
+                    return Text(
+                      'No Data',
+                      style: Theme.of(context).textTheme.headline4,
+                    );
+                  }
                 }),
           ],
         ),

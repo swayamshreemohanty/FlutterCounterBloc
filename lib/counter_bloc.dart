@@ -8,7 +8,8 @@ enum CounterAction {
 
 class CounterBloc {
   int counter = 0;
-  final _stateStreamController = StreamController<int>();
+  final _stateStreamController = StreamController<
+      int>.broadcast(); //.broadcast() is used to set multiple listener.
   StreamSink<int> get counterSink => _stateStreamController.sink;
   Stream<int> get counterStream => _stateStreamController.stream;
 
@@ -18,6 +19,12 @@ class CounterBloc {
 
   CounterBloc() {
     counter = 0;
+
+    //Broadcasting Testing for counter sink
+    counterStream.listen((event) {
+      print("Counter Stream Event");
+      print(event);
+    });
 
     eventStream.listen(
       (event) {
@@ -31,5 +38,10 @@ class CounterBloc {
         counterSink.add(counter);
       },
     );
+  }
+
+  void dispose() {
+    _stateStreamController.close();
+    _eventStreamController.close();
   }
 }
